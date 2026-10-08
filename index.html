@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHOCIAL CHAT</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#0b0b0f;
+    color:white;
+}
+button,input{font:inherit}
+#loginScreen{
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#111,#292929);
+}
+.loginBox{
+    width:360px;
+    max-width:90%;
+    padding:35px;
+    border-radius:22px;
+    background:#17171d;
+    text-align:center;
+    box-shadow:0 20px 60px #000;
+}
+.loginBox h1{margin-top:0}
+.googleBtn{
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    cursor:pointer;
+    background:white;
+    color:#111;
+    font-weight:bold;
+}
+#app{
+    display:none;
+    height:100vh;
+}
+.sidebar{
+    width:300px;
+    background:#15151b;
+    border-right:1px solid #292930;
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+}
+.profile{
+    padding:10px;
+    border-radius:15px;
+    background:#202027;
+    margin-bottom:12px;
+}
+.avatar{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    object-fit:cover;
+}
+.profileRow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.search{
+    width:100%;
+    padding:12px;
+    border:0;
+    outline:none;
+    border-radius:12px;
+    background:#24242c;
+    color:white;
+    margin-bottom:10px;
+}
+.people{
+    overflow:auto;
+}
+.person{
+    padding:12px;
+    border-radius:12px;
+    cursor:pointer;
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+.person:hover{background:#25252d}
+.chatArea{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+.chatHeader{
+    height:70px;
+    padding:10px 15px;
+    border-bottom:1px solid #292930;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.chatUser{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.callButtons{
+    display:flex;
+    gap:8px;
+}
+.callBtn{
+    border:0;
+    border-radius:12px;
+    padding:10px 14px;
+    cursor:pointer;
+    background:#25252d;
+    color:white;
+}
+.callBtn:hover{background:#34343d}
+.messages{
+    flex:1;
+    overflow:auto;
+    padding:20px;
+}
+.message{
+    margin:8px 0;
+    display:flex;
+}
+.message.mine{justify-content:flex-end}
+.bubble{
+    max-width:70%;
+    padding:10px 13px;
+    border-radius:16px;
+    background:#25252d;
+    word-break:break-word;
+}
+.mine .bubble{
+    background:#315cff;
+}
+.time{
+    font-size:10px;
+    opacity:.6;
+    margin-top:4px;
+}
+.composer{
+    padding:12px;
+    display:flex;
+    gap:8px;
+    border-top:1px solid #292930;
+}
+.composer input{
+    flex:1;
+    border:0;
+    outline:none;
+    border-radius:13px;
+    padding:13px;
+    background:#24242c;
+    color:white;
+}
+.sendBtn,.mediaBtn,.voiceBtn{
+    border:0;
+    border-radius:13px;
+    padding:0 15px;
+    cursor:pointer;
+    background:#315cff;
+    color:white;
+}
+.mediaBtn,.voiceBtn{
+    background:#25252d;
+}
+.logout{
+    margin-top:auto;
+    padding:12px;
+    border:0;
+    border-radius:12px;
+    background:#292930;
+    color:white;
+    cursor:pointer;
+}
+
+/* CALL SCREEN */
+#callScreen{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:rgba(5,5,8,.97);
+    align-items:center;
+    justify-content:center;
+}
+.callBox{
+    width:360px;
+    max-width:90%;
+    text-align:center;
+    padding:35px;
+    border-radius:25px;
+    background:#18181f;
+    box-shadow:0 20px 80px #000;
+}
+.callAvatar{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:15px;
+}
+.callName{
+    font-size:24px;
+    font-weight:bold;
+}
+.callStatus{
+    opacity:.7;
+    margin:10px 0 25px;
+}
+.callActions{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+}
+.accept{
+    background:#18a957;
+    border:0;
+    color:white;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:22px;
+}
+.reject,.hangup{
+    background:#e53935;
+    border:0;
+    color:white;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:22px;
+}
+.mute{
+    background:#444;
+    border:0;
+    color:white;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:22px;
+}
+
+@media(max-width:700px){
+    .sidebar{
+        width:90px;
+    }
+    .sidebar .profileText,
+    .sidebar .search,
+    .sidebar .personText,
+    .sidebar .logoutText{
+        display:none;
+    }
+    .person{
+        justify-content:center;
+    }
+    .bubble{max-width:85%}
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+    <div class="loginBox">
+        <h1>SHOCIAL CHAT</h1>
+        <p>Chat with your friends</p>
+        <button class="googleBtn" id="googleLogin">
+            🔐 Continue with Google
+        </button>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+    <aside class="sidebar">
+
+        <div class="profile">
+            <div class="profileRow">
+                <img id="myAvatar" class="avatar">
+                <div class="profileText">
+                    <b id="myName">User</b>
+                    <div id="myEmail" style="font-size:11px;opacity:.6"></div>
+                </div>
+            </div>
+        </div>
+
+        <input
+            id="searchInput"
+            class="search"
+            placeholder="Search people..."
+        >
+
+        <div id="people" class="people"></div>
+
+        <button class="logout" id="logoutBtn">
+            🚪 <span class="logoutText">Logout</span>
+        </button>
+
+    </aside>
+
+    <main class="chatArea">
+
+        <div class="chatHeader">
+
+            <div class="chatUser">
+                <img id="chatAvatar" class="avatar">
+                <div>
+                    <b id="chatName">Select someone</b>
+                    <div id="chatStatus" style="font-size:11px;opacity:.6"></div>
+                </div>
+            </div>
+
+            <div class="callButtons">
+                <button class="callBtn" id="voiceCallBtn">
+                    📞
+                </button>
+            </div>
+
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="composer">
+
+            <input type="file" id="fileInput" hidden>
+
+            <button class="mediaBtn" id="mediaBtn">📎</button>
+
+            <button class="voiceBtn" id="voiceBtn">🎙️</button>
+
+            <input
+                id="messageInput"
+                placeholder="Type a message..."
+            >
+
+            <button class="sendBtn" id="sendBtn">➤</button>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- CALL UI -->
+<div id="callScreen">
+
+    <div class="callBox">
+
+        <img id="callAvatar" class="callAvatar">
+
+        <div id="callName" class="callName">
+            Calling...
+        </div>
+
+        <div id="callStatus" class="callStatus">
+            Calling...
+        </div>
+
+        <div id="callTimer" class="callStatus">
+            00:00
+        </div>
+
+        <div class="callActions">
+
+            <button
+                id="acceptCall"
+                class="accept"
+            >📞</button>
+
+            <button
+                id="muteCall"
+                class="mute"
+                style="display:none"
+            >🎙️</button>
+
+            <button
+                id="rejectCall"
+                class="reject"
+            >✕</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<audio id="remoteAudio" autoplay></audio>
+
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    doc,
+    setDoc,
+    getDoc,
+    getDocs,
+    addDoc,
+    deleteDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBTjA_RsNNq1PtfSdE2VyFJS_5oU8BsVNc",
+    authDomain: "social-chat-d48ff.firebaseapp.com",
+    projectId: "social-chat-d48ff",
+    storageBucket: "social-chat-d48ff.firebasestorage.app",
+    messagingSenderId: "198437830373",
+    appId: "1:198437830373:web:61616f534f9ee7e3c19e0c",
+    measurementId: "G-7XMGG8N96Z"
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+const provider = new GoogleAuthProvider();
+
+
+let currentUser = null;
+
+let currentChatUser = null;
+
+let unsubscribeMessages = null;
+
+let unsubscribePeople = null;
+
+let unsubscribeIncomingCalls = null;
+
+
+/* =========================
+   LOGIN
+========================= */
+
+document
+.getElementById("googleLogin")
+.addEventListener("click", async () => {
+
+    try{
+
+        await signInWithPopup(auth, provider);
+
+    }catch(error){
+
+        alert(error.message);
+
+    }
+
+});
+
+
+/* =========================
+   AUTH
+========================= */
+
+onAuthStateChanged(auth, async user => {
+
+    if(user){
+
+        currentUser = user;
+
+        document.getElementById("loginScreen").style.display = "none";
+
+        document.getElementById("app").style.display = "flex";
+
+        await createProfile();
+
+        await loadMyProfile();
+
+        loadPeople();
+
+        listenIncomingCalls();
+
+    }else{
+
+        document.getElementById("loginScreen").style.display = "flex";
+
+        document.getElementById("app").style.display = "none";
+
+    }
+
+});
+
+
+/* =========================
+   PROFILE
+========================= */
+
+async function createProfile(){
+
+    const ref = doc(db,"users",currentUser.uid);
+
+    const snap = await getDoc(ref);
+
+    if(!snap.exists()){
+
+        await setDoc(ref,{
+
+            uid:currentUser.uid,
+
+            name:currentUser.displayName || "User",
+
+            email:currentUser.email || "",
+
+            photo:currentUser.photoURL || "",
+
+            createdAt:serverTimestamp()
+
+        });
+
+    }
+
+}
+
+
+async function loadMyProfile(){
+
+    const snap = await getDoc(
+        doc(db,"users",currentUser.uid)
+    );
+
+    if(!snap.exists()) return;
+
+    const data = snap.data();
+
+    document.getElementById("myName").textContent =
+        data.name || "User";
+
+    document.getElementById("myEmail").textContent =
+        data.email || "";
+
+    document.getElementById("myAvatar").src =
+        data.photo ||
+        currentUser.photoURL ||
+        "https://ui-avatars.com/api/?name=User";
+
+}
+
+
+/* =========================
+   PEOPLE
+========================= */
+
+async function loadPeople(){
+
+    const peopleBox =
+        document.getElementById("people");
+
+    const snap =
+        await getDocs(collection(db,"users"));
+
+    function render(){
+
+        peopleBox.innerHTML = "";
+
+        const search =
+            document.getElementById("searchInput")
+            .value
+            .toLowerCase();
+
+        snap.forEach(item => {
+
+            const data = item.data();
+
+            if(data.uid === currentUser.uid)
+                return;
+
+            if(
+                search &&
+                !(data.name || "")
+                .toLowerCase()
+                .includes(search)
+            ) return;
+
+            const div = document.createElement("div");
+
+            div.className = "person";
+
+            div.innerHTML = `
+                <img class="avatar"
+                src="${data.photo ||
+                "https://ui-avatars.com/api/?name="+
+                encodeURIComponent(data.name || "User")}">
+
+                <div class="personText">
+                    <b>${escapeHTML(data.name || "User")}</b>
+                    <div style="font-size:10px;opacity:.5">
+                        ${escapeHTML(data.email || "")}
+                    </div>
+                </div>
+            `;
+
+            div.onclick = () => openChat(data);
+
+            peopleBox.appendChild(div);
+
+        });
+
+    }
+
+    render();
+
+    document
+    .getElementById("searchInput")
+    .oninput = render;
+
+}
+
+
+/* =========================
+   CHAT ID
+========================= */
+
+function chatId(a,b){
+
+    return [a,b].sort().join("_");
+
+}
+
+
+/* =========================
+   OPEN CHAT
+========================= */
+
+function openChat(user){
+
+    currentChatUser = user;
+
+    document.getElementById("chatName")
+        .textContent =
+        user.name || "User";
+
+    document.getElementById("chatAvatar")
+        .src =
+        user.photo ||
+        "https://ui-avatars.com/api/?name="+
+        encodeURIComponent(user.name || "User");
+
+    loadMessages();
+
+}
+
+
+/* =========================
+   LOAD MESSAGES
+========================= */
+
+function loadMessages(){
+
+    if(!currentChatUser) return;
+
+    if(unsubscribeMessages)
+        unsubscribeMessages();
+
+    const id =
+        chatId(
+            currentUser.uid,
+            currentChatUser.uid
+        );
+
+    const ref =
+        collection(
+            db,
+            "chats",
+            id,
+            "messages"
+        );
+
+    const q =
+        query(
+            ref,
+            orderBy("createdAt","asc")
+        );
+
+    unsubscribeMessages =
+        onSnapshot(q,snapshot => {
+
+            const box =
+                document.getElementById("messages");
+
+            box.innerHTML = "";
+
+            snapshot.forEach(item => {
+
+                const msg = item.data();
+
+                renderMessage(
+                    item.id,
+                    msg,
+                    box
+                );
+
+            });
+
+            box.scrollTop = box.scrollHeight;
+
+        });
+
+}
+
+
+/* =========================
+   RENDER MESSAGE
+========================= */
+
+function renderMessage(id,msg,box){
+
+    const mine =
+        msg.senderId === currentUser.uid;
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "message " +
+        (mine ? "mine" : "");
+
+    let content = "";
+
+    if(msg.type === "image"){
+
+        content = `
+            <img
+                src="${msg.data}"
+                style="
+                    max-width:250px;
+                    border-radius:12px;
+                "
+            >
+        `;
+
+    }else if(msg.type === "voice"){
+
+        content = `
+            <audio
+                controls
+                src="${msg.data}"
+                style="max-width:220px"
+            ></audio>
+        `;
+
+    }else if(msg.type === "file"){
+
+        content = `
+            <a
+                href="${msg.data}"
+                download="${escapeHTML(msg.name || "file")}"
+                style="color:white"
+            >
+                📄 ${escapeHTML(msg.name || "File")}
+            </a>
+        `;
+
+    }else{
+
+        content =
+            escapeHTML(msg.text || "");
+
+    }
+
+    div.innerHTML = `
+        <div class="bubble">
+
+            ${content}
+
+            <div class="time">
+                ${formatTime(msg.createdAt)}
+            </div>
+
+        </div>
+    `;
+
+    box.appendChild(div);
+
+}
+
+
+/* =========================
+   SEND MESSAGE
+========================= */
+
+async function sendMessage(){
+
+    if(!currentChatUser) return;
+
+    const input =
+        document.getElementById("messageInput");
+
+    const text =
+        input.value.trim();
+
+    if(!text) return;
+
+    const id =
+        chatId(
+            currentUser.uid,
+            currentChatUser.uid
+        );
+
+    await addDoc(
+        collection(
+            db,
+            "chats",
+            id,
+            "messages"
+        ),
+        {
+            text:text,
+            type:"text",
+            senderId:currentUser.uid,
+            receiverId:currentChatUser.uid,
+            createdAt:serverTimestamp()
+        }
+    );
+
+    input.value = "";
+
+}
+
+
+document
+.getElementById("sendBtn")
+.addEventListener("click",sendMessage);
+
+
+document
+.getElementById("messageInput")
+.addEventListener("keydown",e=>{
+
+    if(e.key === "Enter")
+        sendMessage();
+
+});
+
+
+/* =========================
+   MEDIA
+========================= */
+
+document
+.getElementById("mediaBtn")
+.onclick = () =>
+    document.getElementById("fileInput").click();
+
+
+document
+.getElementById("fileInput")
+.onchange = async e => {
+
+    if(!currentChatUser) return;
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    if(file.size > 500000){
+
+        alert("File too large. Keep it under 500KB.");
+
+        return;
+
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = async () => {
+
+        const id =
+            chatId(
+                currentUser.uid,
+                currentChatUser.uid
+            );
+
+        await addDoc(
+            collection(
+                db,
+                "chats",
+                id,
+                "messages"
+            ),
+            {
+                type:
+                    file.type.startsWith("image/")
+                    ? "image"
+                    : "file",
+
+                data:reader.result,
+
+                name:file.name,
+
+                senderId:currentUser.uid,
+
+                receiverId:currentChatUser.uid,
+
+                createdAt:serverTimestamp()
+            }
+        );
+
+    };
+
+    reader.readAsDataURL(file);
+
+};
+
+
+/* =========================
+   VOICE MESSAGE
+========================= */
+
+let mediaRecorder = null;
+
+let audioChunks = [];
+
+document
+.getElementById("voiceBtn")
+.onclick = async () => {
+
+    if(mediaRecorder &&
+       mediaRecorder.state === "recording"){
+
+        mediaRecorder.stop();
+
+        return;
+
+    }
+
+    if(!currentChatUser){
+
+        alert("Pehle kisi person ko select karo.");
+
+        return;
+
+    }
+
+    try{
+
+        const stream =
+            await navigator.mediaDevices
+            .getUserMedia({audio:true});
+
+        audioChunks = [];
+
+        mediaRecorder =
+            new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable =
+            e => audioChunks.push(e.data);
+
+        mediaRecorder.onstop = async () => {
+
+            stream.getTracks()
+                .forEach(track=>track.stop());
+
+            const blob =
+                new Blob(
+                    audioChunks,
+                    {type:"audio/webm"}
+                );
+
+            if(blob.size > 700000){
+
+                alert("Voice message too large.");
+
+                return;
+
+            }
+
+            const reader =
+                new FileReader();
+
+            reader.onload = async () => {
+
+                const id =
+                    chatId(
+                        currentUser.uid,
+                        currentChatUser.uid
+                    );
+
+                await addDoc(
+                    collection(
+                        db,
+                        "chats",
+                        id,
+                        "messages"
+                    ),
+                    {
+                        type:"voice",
+                        data:reader.result,
+                        senderId:currentUser.uid,
+                        receiverId:currentChatUser.uid,
+                        createdAt:serverTimestamp()
+                    }
+                );
+
+            };
+
+            reader.readAsDataURL(blob);
+
+        };
+
+        mediaRecorder.start();
+
+        alert("Recording... 🎙️ Press OK then click 🎙️ again to stop.");
+
+    }catch(error){
+
+        alert("Microphone permission denied.");
+
+    }
+
+};
+
+
+/* ==================================================
+   FREE WEBRTC VOICE CALL
+================================================== */
+
+let peerConnection = null;
+
+let localStream = null;
+
+let currentCallId = null;
+
+let callDocRef = null;
+
+let unsubscribeCall = null;
+
+let callerCandidates = [];
+
+let calleeCandidates = [];
+
+let isMuted = false;
+
+let callSeconds = 0;
+
+let callTimerInterval = null;
+
+
+/* FREE STUN SERVERS */
+
+const rtcConfig = {
+
+    iceServers:[
+        {
+            urls:"stun:stun.l.google.com:19302"
+        },
+        {
+            urls:"stun:stun1.l.google.com:19302"
+        }
+    ]
+
+};
+
+
+/* =========================
+   START CALL
+========================= */
+
+document
+.getElementById("voiceCallBtn")
+.onclick = startVoiceCall;
+
+
+async function startVoiceCall(){
+
+    if(!currentChatUser){
+
+        alert("Pehle kisi person ko select karo.");
+
+        return;
+
+    }
+
+    try{
+
+        localStream =
+            await navigator.mediaDevices
+            .getUserMedia({
+                audio:true,
+                video:false
+            });
+
+    }catch(error){
+
+        alert(
+            "Microphone permission allow karo."
+        );
+
+        return;
+
+    }
+
+    currentCallId =
+        currentUser.uid +
+        "_" +
+        Date.now();
+
+    callDocRef =
+        doc(
+            db,
+            "calls",
+            currentCallId
+        );
+
+    peerConnection =
+        new RTCPeerConnection(rtcConfig);
+
+    localStream
+        .getTracks()
+        .forEach(track =>
+            peerConnection.addTrack(
+                track,
+                localStream
+            )
+        );
+
+    peerConnection.ontrack =
+        event => {
+
+            const audio =
+                document.getElementById(
+                    "remoteAudio"
+                );
+
+            audio.srcObject =
+                event.streams[0];
+
+        };
+
+
+    peerConnection.onicecandidate =
+        async event => {
+
+            if(event.candidate){
+
+                await addDoc(
+                    collection(
+                        db,
+                        "calls",
+                        currentCallId,
+                        "callerCandidates"
+                    ),
+                    event.candidate.toJSON()
+                );
+
+            }
+
+        };
+
+
+    const offer =
+        await peerConnection.createOffer();
+
+    await peerConnection.setLocalDescription(
+        offer
+    );
+
+
+    await setDoc(
+        callDocRef,
+        {
+            callerId:currentUser.uid,
+
+            calleeId:currentChatUser.uid,
+
+            callerName:
+                currentUser.displayName ||
+                "User",
+
+            callerPhoto:
+                currentUser.photoURL || "",
+
+            offer:{
+                type:offer.type,
+                sdp:offer.sdp
+            },
+
+            status:"ringing",
+
+            createdAt:serverTimestamp()
+        }
+    );
+
+
+    showCallScreen(
+        currentChatUser.name || "User",
+        currentChatUser.photo || "",
+        "Calling..."
+    );
+
+
+    listenForAnswer();
+
+    listenForCalleeCandidates();
+
+}
+
+
+/* =========================
+   LISTEN ANSWER
+========================= */
+
+function listenForAnswer(){
+
+    if(unsubscribeCall)
+        unsubscribeCall();
+
+    unsubscribeCall =
+        onSnapshot(
+            callDocRef,
+            async snap => {
+
+                if(!snap.exists())
+                    return;
+
+                const data = snap.data();
+
+                if(
+                    data.answer &&
+                    !peerConnection.currentRemoteDescription
+                ){
+
+                    await peerConnection.setRemoteDescription(
+                        new RTCSessionDescription(
+                            data.answer
+                        )
+                    );
+
+                    startTimer();
+
+                    document
+                    .getElementById("callStatus")
+                    .textContent =
+                        "Connected";
+
+                    document
+                    .getElementById("muteCall")
+                    .style.display =
+                        "block";
+
+                }
+
+                if(data.status === "ended"){
+
+                    endCall(false);
+
+                }
+
+            }
+        );
+
+}
+
+
+/* =========================
+   CALLEE CANDIDATES
+========================= */
+
+function listenForCalleeCandidates(){
+
+    onSnapshot(
+        collection(
+            db,
+            "calls",
+            currentCallId,
+            "calleeCandidates"
+        ),
+        snapshot => {
+
+            snapshot.docChanges()
+            .forEach(async change => {
+
+                if(change.type === "added"){
+
+                    await peerConnection
+                    .addIceCandidate(
+                        new RTCIceCandidate(
+                            change.doc.data()
+                        )
+                    );
+
+                }
+
+            });
+
+        }
+    );
+
+}
+
+
+/* =========================
+   INCOMING CALLS
+========================= */
+
+function listenIncomingCalls(){
+
+    if(unsubscribeIncomingCalls)
+        unsubscribeIncomingCalls();
+
+    const q =
+        query(
+            collection(db,"calls")
+        );
+
+    unsubscribeIncomingCalls =
+        onSnapshot(q,snapshot => {
+
+            snapshot.docChanges()
+            .forEach(change => {
+
+                if(change.type !== "added")
+                    return;
+
+                const data =
+                    change.doc.data();
+
+                if(
+                    data.calleeId !==
+                    currentUser.uid
+                ) return;
+
+                if(data.status !== "ringing")
+                    return;
+
+                if(currentCallId)
+                    return;
+
+                showIncomingCall(
+                    change.doc.id,
+                    data
+                );
+
+            });
+
+        });
+
+}
+
+
+/* =========================
+   SHOW INCOMING
+========================= */
+
+function showIncomingCall(callId,data){
+
+    currentCallId = callId;
+
+    callDocRef =
+        doc(
+            db,
+            "calls",
+            callId
+        );
+
+    document
+    .getElementById("callAvatar")
+    .src =
+        data.callerPhoto ||
+        "https://ui-avatars.com/api/?name="+
+        encodeURIComponent(
+            data.callerName || "User"
+        );
+
+    document
+    .getElementById("callName")
+    .textContent =
+        data.callerName || "User";
+
+    document
+    .getElementById("callStatus")
+    .textContent =
+        "Incoming voice call...";
+
+    document
+    .getElementById("acceptCall")
+    .style.display =
+        "block";
+
+    document
+    .getElementById("rejectCall")
+    .style.display =
+        "block";
+
+    document
+    .getElementById("muteCall")
+    .style.display =
+        "none";
+
+    document
+    .getElementById("callScreen")
+    .style.display =
+        "flex";
+
+}
+
+
+/* =========================
+   ACCEPT CALL
+========================= */
+
+document
+.getElementById("acceptCall")
+.onclick =
+    acceptCall;
+
+
+async function acceptCall(){
+
+    try{
+
+        const snap =
+            await getDoc(callDocRef);
+
+        if(!snap.exists()) return;
+
+        const data =
+            snap.data();
+
+        localStream =
+            await navigator.mediaDevices
+            .getUserMedia({
+                audio:true,
+                video:false
+            });
+
+        peerConnection =
+            new RTCPeerConnection(rtcConfig);
+
+        localStream
+        .getTracks()
+        .forEach(track =>
+            peerConnection.addTrack(
+                track,
+                localStream
+            )
+        );
+
+
+        peerConnection.ontrack =
+            event => {
+
+                document
+                .getElementById("remoteAudio")
+                .srcObject =
+                    event.streams[0];
+
+            };
+
+
+        peerConnection.onicecandidate =
+            async event => {
+
+                if(event.candidate){
+
+                    await addDoc(
+                        collection(
+                            db,
+                            "calls",
+                            currentCallId,
+                            "calleeCandidates"
+                        ),
+                        event.candidate.toJSON()
+                    );
+
+                }
+
+            };
+
+
+        await peerConnection
+        .setRemoteDescription(
+            new RTCSessionDescription(
+                data.offer
+            )
+        );
+
+
+        const answer =
+            await peerConnection
+            .createAnswer();
+
+        await peerConnection
+        .setLocalDescription(answer);
+
+
+        await setDoc(
+            callDocRef,
+            {
+                answer:{
+                    type:answer.type,
+                    sdp:answer.sdp
+                },
+
+                status:"connected"
+            },
+            {merge:true}
+        );
+
+
+        listenForCallerCandidates();
+
+        document
+        .getElementById("callStatus")
+        .textContent =
+            "Connected";
+
+        document
+        .getElementById("acceptCall")
+        .style.display =
+            "none";
+
+        document
+        .getElementById("muteCall")
+        .style.display =
+            "block";
+
+        startTimer();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Call connect nahi hui: " +
+            error.message
+        );
+
+        endCall();
+
+    }
+
+}
+
+
+/* =========================
+   CALLER CANDIDATES
+========================= */
+
+function listenForCallerCandidates(){
+
+    onSnapshot(
+        collection(
+            db,
+            "calls",
+            currentCallId,
+            "callerCandidates"
+        ),
+        snapshot => {
+
+            snapshot.docChanges()
+            .forEach(async change => {
+
+                if(change.type === "added"){
+
+                    try{
+
+                        await peerConnection
+                        .addIceCandidate(
+                            new RTCIceCandidate(
+                                change.doc.data()
+                            )
+                        );
+
+                    }catch(e){
+
+                        console.log(e);
+
+                    }
+
+                }
+
+            });
+
+        }
+    );
+
+}
+
+
+/* =========================
+   REJECT CALL
+========================= */
+
+document
+.getElementById("rejectCall")
+.onclick =
+    () => endCall(true);
+
+
+/* =========================
+   MUTE
+========================= */
+
+document
+.getElementById("muteCall")
+.onclick = () => {
+
+    if(!localStream) return;
+
+    const tracks =
+        localStream.getAudioTracks();
+
+    tracks.forEach(track => {
+
+        track.enabled =
+            !track.enabled;
+
+    });
+
+    isMuted =
+        !isMuted;
+
+    document
+    .getElementById("muteCall")
+    .textContent =
+        isMuted ? "🔇" : "🎙️";
+
+};
+
+
+/* =========================
+   END CALL
+========================= */
+
+async function endCall(updateRemote=true){
+
+    try{
+
+        if(
+            updateRemote &&
+            callDocRef
+        ){
+
+            await setDoc(
+                callDocRef,
+                {
+                    status:"ended"
+                },
+                {merge:true}
+            );
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+
+    if(unsubscribeCall){
+
+        unsubscribeCall();
+
+        unsubscribeCall = null;
+
+    }
+
+
+    if(peerConnection){
+
+        peerConnection.close();
+
+        peerConnection = null;
+
+    }
+
+
+    if(localStream){
+
+        localStream
+        .getTracks()
+        .forEach(track =>
+            track.stop()
+        );
+
+        localStream = null;
+
+    }
+
+
+    document
+    .getElementById("remoteAudio")
+    .srcObject = null;
+
+
+    stopTimer();
+
+    currentCallId = null;
+
+    callDocRef = null;
+
+    document
+    .getElementById("callScreen")
+    .style.display =
+        "none";
+
+}
+
+
+/* =========================
+   CALL SCREEN
+========================= */
+
+function showCallScreen(
+    name,
+    photo,
+    status
+){
+
+    document
+    .getElementById("callAvatar")
+    .src =
+        photo ||
+        "https://ui-avatars.com/api/?name="+
+        encodeURIComponent(name);
+
+    document
+    .getElementById("callName")
+    .textContent =
+        name;
+
+    document
+    .getElementById("callStatus")
+    .textContent =
+        status;
+
+    document
+    .getElementById("acceptCall")
+    .style.display =
+        "none";
+
+    document
+    .getElementById("rejectCall")
+    .style.display =
+        "block";
+
+    document
+    .getElementById("muteCall")
+    .style.display =
+        "none";
+
+    document
+    .getElementById("callScreen")
+    .style.display =
+        "flex";
+
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+function startTimer(){
+
+    if(callTimerInterval)
+        return;
+
+    callSeconds = 0;
+
+    callTimerInterval =
+        setInterval(() => {
+
+            callSeconds++;
+
+            const mins =
+                String(
+                    Math.floor(
+                        callSeconds / 60
+                    )
+                ).padStart(2,"0");
+
+            const secs =
+                String(
+                    callSeconds % 60
+                ).padStart(2,"0");
+
+            document
+            .getElementById("callTimer")
+            .textContent =
+                mins + ":" + secs;
+
+        },1000);
+
+}
+
+
+function stopTimer(){
+
+    if(callTimerInterval){
+
+        clearInterval(callTimerInterval);
+
+        callTimerInterval = null;
+
+    }
+
+    document
+    .getElementById("callTimer")
+    .textContent =
+        "00:00";
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+document
+.getElementById("logoutBtn")
+.onclick = async () => {
+
+    await signOut(auth);
+
+};
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+function formatTime(timestamp){
+
+    if(!timestamp)
+        return "";
+
+    try{
+
+        return timestamp
+            .toDate()
+            .toLocaleTimeString(
+                [],
+                {
+                    hour:"2-digit",
+                    minute:"2-digit"
+                }
+            );
+
+    }catch{
+
+        return "";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
