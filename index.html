@@ -1,1127 +1,191 @@
 
-
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-
-<title>SHOCIAL CHAT</title>
-
+<title>SOCIAL CHAT | Next Generation</title>
 <style>
-
-:root{--bg:#f4f6fb;--panel:#fff;--text:#202333;--muted:#777d91;--line:#e8eaf1;--accent:#635bff;--soft:#efeeff;--green:#22a06b}
-
+:root{--bg:#090b15;--panel:#131628;--text:#f7f7ff;--muted:#9da3bf;--line:#292d48;--accent:#9270ff;--soft:#292343;--green:#36e6a3}
 *{box-sizing:border-box}
-
-body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}
-
-button,input,textarea{font:inherit}
-
-button{cursor:pointer}
-
-#login{min-height:100dvh;display:grid;place-items:center;padding:20px}
-
-.loginbox{background:var(--panel);padding:30px;border-radius:24px;text-align:center;width:100%;max-width:370px}
-
-.brand{font-size:25px;font-weight:900;letter-spacing:-1px}
-
-.brand span{color:var(--accent)}
-
-.primary,.secondary,.danger{border:0;border-radius:12px;padding:12px 15px;font-weight:700}
-
-.primary{background:var(--accent);color:white}
-
-.secondary{background:var(--soft);color:var(--accent)}
-
-.danger{background:#ffe9e9;color:#c33}
-
-#app{display:none;min-height:100dvh}
-
-.layout{max-width:1100px;margin:auto;min-height:100dvh;display:flex;flex-direction:column;background:var(--panel);position:relative}
-
-.topbar{height:66px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);gap:10px}
-
-.topright{display:flex;align-items:center;gap:8px}
-
-.iconbtn{width:42px;height:42px;border:0;border-radius:13px;background:var(--bg);color:var(--text);font-size:20px;flex-shrink:0}
-
-.avatar{width:46px;height:46px;object-fit:cover;border-radius:50%;background:var(--soft)}
-
-.smallavatar{width:38px;height:38px;object-fit:cover;border-radius:50%}
-
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,Arial;background:radial-gradient(ellipse at 5% 0%,#38216b66,transparent 35%),radial-gradient(ellipse at 95% 40%,#07516a30,transparent 35%),var(--bg);min-height:100dvh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.15;background-image:radial-gradient(#a69aff 1px,transparent 1px);background-size:25px 25px}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.brand{font-weight:950;font-size:25px;letter-spacing:-1px}.brand span{background:linear-gradient(90deg,#b49aff,#4fe4ff,#ff82cf);background-clip:text;color:transparent}
+.primary,.secondary,.danger{border:0;border-radius:13px;padding:12px 15px;font-weight:800;transition:.2s}
+.primary{color:white;background:linear-gradient(120deg,#7947e8,#6d66ff,#398cff);box-shadow:0 5px 22px #7658ff40}
+.primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px #7658ff70}
+.secondary{background:#292343;color:#cfc3ff;border:1px solid #504179}
+.danger{background:#49202e;color:#ff9db1}
+#login{min-height:100dvh;display:grid;place-items:center;padding:20px;position:relative;overflow:hidden}
+.loginbox{width:100%;max-width:410px;padding:40px 28px;text-align:center;background:linear-gradient(145deg,#1b1e35ed,#101220f2);border:1px solid #8d78ff55;border-radius:30px;box-shadow:0 25px 90px #0008,0 0 40px #7451ff22;animation:enter .7s ease both;position:relative}
+.loginbox:before{content:"";position:absolute;inset:-2px;border-radius:32px;border:1px solid #9d89ff30;pointer-events:none}
+.loginbox .brand{font-size:35px}.loginbox p{color:var(--muted);margin:12px 0 27px}
+@keyframes enter{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+#app{display:none;min-height:100dvh;position:relative}
+.layout{max-width:1120px;margin:auto;min-height:100dvh;display:flex;flex-direction:column;background:#0c0e19eF;border-left:1px solid var(--line);border-right:1px solid var(--line);box-shadow:0 0 100px #0004}
+.topbar{height:75px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:10px;background:#111426eF;border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}
+.topright{display:flex;align-items:center;gap:9px}
+.iconbtn{width:42px;height:42px;display:inline-grid;place-items:center;border:1px solid var(--line);border-radius:14px;background:#ffffff08;color:var(--text);font-size:19px;flex-shrink:0;transition:.2s}
+.iconbtn:hover{background:var(--soft);border-color:#9270ff;transform:translateY(-2px)}
+.avatar,.smallavatar{object-fit:cover;border-radius:50%;background:#292343;border:2px solid #9270ff88;flex-shrink:0}
+.avatar{width:46px;height:46px;box-shadow:0 0 0 4px #9270ff16}
+.smallavatar{width:39px;height:39px}
+#topAvatar{animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px #9270ff22,0 0 20px #9270ff30}}
 .page{display:none;flex:1;min-height:0}
-
-.page.active{display:flex;flex-direction:column}
-
-.pagehead{padding:17px 17px 10px}
-
-.pagehead h2{margin:0 0 6px;font-size:23px}
-
+.page.active{display:flex;flex-direction:column;animation:pagein .25s ease}
+@keyframes pagein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pagehead{padding:22px 24px 14px}.pagehead h2{margin:0 0 5px;font-size:26px;letter-spacing:-.5px}
 .muted{color:var(--muted);font-size:13px}
-
-.search{width:100%;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--bg);outline:none;color:var(--text)}
-
 .scroll{overflow:auto;overscroll-behavior:contain;flex:1;min-height:0}
-
-.person{display:flex;align-items:center;gap:11px;padding:13px 17px;border-bottom:1px solid var(--line);cursor:pointer;min-height:70px}
-
-.person:hover{background:var(--bg)}
-
-.personinfo{flex:1;min-width:0}
-
-.personinfo b,.personinfo small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.personinfo small{color:var(--muted);margin-top:5px}
-
-.rowbuttons{display:flex;gap:6px;align-items:center}
-
-.rowbuttons button{padding:9px 10px;font-size:12px}
-
-.empty{text-align:center;padding:35px 20px;color:var(--muted)}
-
-#chatPage{min-height:0}
-
-.chathead{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line)}
-
-.chatheadinfo{flex:1;min-width:0}
-
-.chatheadinfo b,.chatheadinfo small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.chatheadinfo small{color:var(--muted);margin-top:4px}
-
-#messages{flex:1;min-height:100px;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:9px;background:var(--bg)}
-
-.msg{max-width:83%;padding:11px 13px;border-radius:17px;background:var(--panel);box-shadow:0 1px 3px #00000008;overflow-wrap:anywhere}
-
-.msg.mine{align-self:flex-end;background:var(--accent);color:white;border-bottom-right-radius:5px}
-
+.scroll::-webkit-scrollbar,#messages::-webkit-scrollbar{width:5px}
+.scroll::-webkit-scrollbar-thumb,#messages::-webkit-scrollbar-thumb{background:#514775;border-radius:10px}
+.person{display:flex;align-items:center;gap:12px;padding:15px 22px;border-bottom:1px solid #292d483e;min-height:76px;cursor:pointer;transition:.2s}
+.person:hover{background:#9270ff0c}
+.personinfo{flex:1;min-width:0}.personinfo b,.personinfo small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.personinfo small{color:var(--muted);margin-top:4px}
+.rowbuttons{display:flex;gap:6px;align-items:center}.rowbuttons button{padding:9px 10px;font-size:12px}
+.empty{text-align:center;padding:38px 20px;color:var(--muted)}
+.search{width:100%;padding:13px;border:1px solid var(--line);border-radius:14px;background:#101322;color:var(--text);outline:none}
+.search:focus,.field:focus,.composer input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #9270ff1c}
+.chathead{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line);background:#111426}
+.chatheadinfo{flex:1;min-width:0}.chatheadinfo b,.chatheadinfo small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chatheadinfo small{color:var(--muted);margin-top:3px}
+#messages{flex:1;min-height:100px;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:11px;background:radial-gradient(ellipse at 50% 0%,#30245a22,transparent 65%),#0b0d18}
+.msg{max-width:83%;padding:11px 14px;border:1px solid #ffffff0b;border-radius:18px;background:#1b1e32;box-shadow:0 5px 20px #0002;overflow-wrap:anywhere;animation:msgin .2s ease}
+@keyframes msgin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.msg.mine{align-self:flex-end;background:linear-gradient(135deg,#7147da,#5a55d9);color:white;border-bottom-right-radius:5px}
 .msg:not(.mine){align-self:flex-start;border-bottom-left-radius:5px}
-
 .msgtime{font-size:10px;opacity:.65;margin-top:5px}
-
-.msg img{max-width:100%;max-height:230px;border-radius:10px}
-
-.msg audio{max-width:220px;width:100%}
-
-.composer{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--line)}
-
-.composer input{min-width:0;flex:1;border:1px solid var(--line);background:var(--bg);border-radius:24px;padding:13px;outline:none;color:var(--text)}
-
-.send{height:44px;width:45px;border:0;border-radius:50%;background:var(--accent);color:white;font-size:20px;flex-shrink:0}
-
-.composer .iconbtn{width:40px;height:40px;font-size:18px}
-
-.bottomnav{height:68px;flex-shrink:0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
-
-.navbtn{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px}
-
-.navbtn span{font-size:22px}
-
-.navbtn.active{color:var(--accent);font-weight:bold}
-
+.msg img{max-width:100%;max-height:230px;border-radius:10px}.msg audio{max-width:100%}
+.composer{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:12px;background:#111426;border-top:1px solid var(--line)}
+.composer input{min-width:0;flex:1;border:1px solid var(--line);background:#0b0d18;border-radius:25px;padding:13px 16px;outline:none;color:var(--text)}
+.send{height:44px;width:45px;border:0;border-radius:15px;background:linear-gradient(130deg,#8956ff,#497dff);color:white;font-size:20px;flex-shrink:0}
+.composer .iconbtn{width:40px;height:40px}
+.bottomnav{height:70px;flex-shrink:0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:#111426;padding-bottom:env(safe-area-inset-bottom)}
+.navbtn{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px}
+.navbtn span{font-size:22px}.navbtn.active{color:#b7a3ff;font-weight:bold;background:linear-gradient(0deg,#9270ff12,transparent);box-shadow:inset 0 2px #9270ff}
 .statuscomposer{padding:15px;display:flex;gap:9px;align-items:center;border-bottom:1px solid var(--line)}
-
-.statuscomposer input{min-width:0;flex:1;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text)}
-
-.statuscard{margin:12px 15px;padding:15px;border:1px solid var(--line);border-radius:16px}
-
-.statuscard img{width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-top:10px;background:var(--bg)}
-
+.statuscomposer input{min-width:0;flex:1;padding:12px;border:1px solid var(--line);border-radius:12px;background:#101322;color:var(--text)}
+.statuscard{margin:12px 15px;padding:16px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(140deg,#191c30,#111321);animation:pagein .25s ease}
+.statuscard img{width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-top:10px;background:#090b15}
 .statuscard p{white-space:pre-wrap;overflow-wrap:anywhere}
-
-.overlay{display:none;position:fixed;inset:0;z-index:10;background:#0008;align-items:flex-end;justify-content:center}
-
+.overlay{display:none;position:fixed;inset:0;z-index:10;background:#03040bd9;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
 .overlay.show{display:flex}
-
-.modal{width:100%;max-width:500px;max-height:90dvh;overflow:auto;background:var(--panel);color:var(--text);padding:22px;border-radius:24px 24px 0 0}
-
-.modal h2{margin-top:0}
-
-.field{display:block;width:100%;margin:7px 0 14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text)}
-
-textarea.field{resize:vertical}
-
-.modalactions{display:flex;gap:9px;flex-wrap:wrap}
-
-.calloverlay{display:none;position:fixed;inset:0;z-index:20;background:#151522;color:white;align-items:center;justify-content:center;padding:20px}
-
-.callbox{text-align:center;width:100%;max-width:360px}
-
-.callbox .avatar{width:100px;height:100px;margin-bottom:18px}
-
+.modal{width:100%;max-width:500px;max-height:90dvh;overflow:auto;background:#15182a;color:var(--text);padding:23px;border:1px solid #ffffff18;border-radius:24px 24px 0 0;box-shadow:0 0 50px #0008}
+.modal h2{margin-top:0}.field{display:block;width:100%;margin:7px 0 14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0b0d18;color:var(--text);outline:none}
+textarea.field{resize:vertical}.modalactions{display:flex;gap:9px;flex-wrap:wrap}
+.calloverlay{display:none;position:fixed;inset:0;z-index:20;background:radial-gradient(ellipse at top,#35236a,#10111c 65%);color:white;align-items:center;justify-content:center;padding:20px}
+.callbox{text-align:center;width:100%;max-width:360px}.callbox .avatar{width:105px;height:105px;margin-bottom:18px}
 .callactions{display:flex;justify-content:center;gap:18px;margin-top:28px}
-
 .callactions button{border:0;border-radius:50%;width:60px;height:60px;font-size:23px;color:white;background:#393949}
-
 .callactions .end{background:#e43d50}
-
-#toast{position:fixed;z-index:50;bottom:85px;left:50%;transform:translateX(-50%);background:#222;color:white;padding:12px 17px;border-radius:12px;display:none;max-width:90%;text-align:center}
-
-body.dark{--bg:#101117;--panel:#191b24;--text:#f2f3fa;--muted:#a0a3b4;--line:#2c2e3a;--soft:#292641;--accent:#837aff}
-
-@media(min-width:760px){
-
- .layout{min-height:100dvh;max-height:100dvh;box-shadow:0 0 40px #00000008}
-
- .pagehead{padding-left:25px;padding-right:25px}
-
- .person{padding-left:25px;padding-right:25px}
-
- .overlay{align-items:center}
-
- .modal{border-radius:22px}
-
-}
-
-@media(max-width:759px){
-
- .layout{height:100dvh;height:100dvh;min-height:0}
-
- .topbar{height:58px;padding:0 12px}
-
- .brand{font-size:22px}
-
- .pagehead{padding:14px 14px 9px}
-
- #messages{padding:10px}
-
- .composer{gap:5px;padding-left:7px;padding-right:7px}
-
- .composer input{padding:12px 10px;font-size:16px}
-
- .composer .iconbtn{width:37px;height:40px}
-
- .send{width:42px;height:42px}
-
- .msg{max-width:88%}
-
- .bottomnav{height:64px}
-
-}
-
+#toast{position:fixed;z-index:50;bottom:85px;left:50%;transform:translateX(-50%);background:#23243a;color:white;padding:12px 17px;border:1px solid #ffffff20;border-radius:13px;display:none;max-width:90%;text-align:center;box-shadow:0 10px 35px #0005}
+body.light{--bg:#f2f3fc;--panel:#fff;--text:#20233a;--muted:#70758e;--line:#e0e3f2;--soft:#eee9ff;background:radial-gradient(ellipse at 0 0,#ddd6ff,transparent 40%),#f2f3fc}
+body.light .layout{background:#ffffffd9}
+body.light .topbar,body.light .bottomnav,body.light .chathead,body.light .composer{background:#fffffff2}
+body.light #messages{background:#f2f3fc}
+body.light .msg:not(.mine),body.light .statuscard{background:#fff;color:#20233a}
+body.light .composer input,body.light .search,body.light .field,body.light .statuscomposer input{background:#f5f6fc;color:#20233a}
+body.light .modal{background:#fff;color:#20233a}
+body.light .loginbox{background:#ffffffed;color:#20233a}
+body.light .loginbox p{color:#70758e}
+@media(min-width:760px){.layout{min-height:100dvh;max-height:100dvh}.overlay{align-items:center}.modal{border-radius:22px}}
+@media(max-width:759px){.layout{height:100dvh;min-height:0}.topbar{height:61px;padding:0 12px}.brand{font-size:22px}.pagehead{padding:16px 15px 10px}.pagehead h2{font-size:23px}.person{padding:13px 14px}#messages{padding:11px}.composer{gap:5px;padding:8px 7px calc(8px + env(safe-area-inset-bottom))}.composer input{padding:12px 10px;font-size:16px}.composer .iconbtn{width:37px}.send{width:42px;height:42px}.msg{max-width:88%}.bottomnav{height:65px}.topright{gap:6px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
-
 </head>
-
 <body>
-
-
-
-<div id="login">
-
- <div class="loginbox">
-
-  <div class="brand">SHOCIAL<span> CHAT</span></div>
-
-  <p class="muted">Chat. Connect. Share.</p>
-
-  <button class="primary" id="loginBtn" style="width:100%">Continue with Google</button>
-
- </div>
-
-</div>
-
-
-
-<div id="app">
-
- <div class="layout">
-
-  <header class="topbar">
-
-   <div class="brand">SHOCIAL<span> CHAT</span></div>
-
-   <div class="topright">
-
-    <button class="iconbtn" id="themeBtn" aria-label="Change theme">🌙</button>
-
-    <button class="iconbtn" id="settingsBtn" aria-label="Settings">⚙️</button>
-
-    <img class="smallavatar" id="topAvatar" alt="Profile">
-
-   </div>
-
-  </header>
-
-
-
-  <section class="page active" id="chatsPage">
-
-   <div class="pagehead">
-
-    <h2>Chats 💬</h2>
-
-    <div class="muted">Apne friends ko message karo</div>
-
-   </div>
-
-   <div id="chatList" class="scroll"></div>
-
-  </section>
-
-
-
-  <section class="page" id="chatPage">
-
-   <div class="chathead">
-
-    <button class="iconbtn" id="backChats">‹</button>
-
-    <img class="avatar" id="chatAvatar" alt="">
-
-    <div class="chatheadinfo"><b id="chatName">Chat</b><small id="chatSub">SHOCIAL CHAT</small></div>
-
-    <button class="iconbtn" id="callBtn" title="Voice call">📞</button>
-
-   </div>
-
-   <div id="messages"></div>
-
-   <div class="composer">
-
-    <button class="iconbtn" id="attachBtn" title="Send image">📎</button>
-
-    <input type="file" id="imageInput" accept="image/*" hidden>
-
-    <button class="iconbtn" id="recordBtn" title="Voice message">🎙️</button>
-
-    <input id="messageInput" placeholder="Message..." autocomplete="off">
-
-    <button class="send" id="sendBtn" aria-label="Send message">➤</button>
-
-   </div>
-
-  </section>
-
-
-
-  <section class="page" id="friendsPage">
-
-   <div class="pagehead">
-
-    <h2>Friends 👥</h2>
-
-    <div class="muted">Requests aur naye friends</div>
-
-   </div>
-
-   <div class="scroll">
-
-    <div style="padding:12px 15px 4px"><h3>Friend requests</h3></div>
-
-    <div id="requestsList"></div>
-
-    <div style="padding:12px 15px 4px"><h3>My Friends</h3></div>
-
-    <div id="myFriends"></div>
-
-    <div style="padding:12px 15px 4px"><h3>Add Friends</h3></div>
-
-    <div style="padding:0 15px 12px"><input id="friendSearch" class="search" placeholder="Search by name or email"></div>
-
-    <div id="addFriendsList"></div>
-
-   </div>
-
-  </section>
-
-
-
-  <section class="page" id="statusPage">
-
-   <div class="pagehead">
-
-    <h2>Status 📸</h2>
-
-    <div class="muted">Share a moment with your friends</div>
-
-   </div>
-
-   <div class="statuscomposer">
-
-    <input id="statusText" placeholder="What's your status?">
-
-    <button class="primary" id="postStatus">Post</button>
-
-   </div>
-
-   <div style="padding:0 15px 12px">
-
-    <button class="secondary" id="statusImageBtn">＋ Add photo</button>
-
-    <input id="statusImageInput" type="file" accept="image/*" hidden>
-
-   </div>
-
-   <div class="scroll" id="statusesList"></div>
-
-  </section>
-
-
-
-  <nav class="bottomnav" id="bottomNav">
-
-   <button class="navbtn active" data-page="chatsPage"><span>💬</span>Chats</button>
-
-   <button class="navbtn" data-page="friendsPage"><span>👥</span>Friends</button>
-
-   <button class="navbtn" data-page="statusPage"><span>📸</span>Status</button>
-
-  </nav>
-
- </div>
-
-</div>
-
-
-
-<div class="overlay" id="settingsOverlay">
-
- <div class="modal">
-
-  <h2>Profile settings ⚙️</h2>
-
-  <label class="muted">Display name</label>
-
-  <input id="profileName" class="field" maxlength="50" placeholder="Your name">
-
-  <label class="muted">Profile photo</label>
-
-  <div style="display:flex;align-items:center;gap:12px;margin:8px 0 12px">
-
-   <img id="profilePhotoPreview" class="avatar" alt="Profile photo preview">
-
-   <div style="flex:1;min-width:0">
-
-    <button class="secondary" id="chooseProfilePhoto" type="button">Choose photo</button>
-
-    <input id="profilePhotoFile" type="file" accept="image/*" hidden>
-
-    <p class="muted">Ya neeche image URL paste karo.</p>
-
-   </div>
-
-  </div>
-
-  <input id="profilePhoto" class="field" placeholder="https://...">
-
-  <label class="muted">Bio</label>
-
-  <textarea id="profileBio" class="field" rows="3" maxlength="160" placeholder="Write a little about yourself"></textarea>
-
-  <div class="modalactions">
-
-   <button class="primary" id="saveProfile">Save profile</button>
-
-   <button class="secondary" id="closeSettings">Close</button>
-
-   <button class="danger" id="logoutBtn">Log out</button>
-
-  </div>
-
-  <p class="muted">Profile photo ke liye publicly accessible image URL use karo.</p>
-
- </div>
-
-</div>
-
-
-
-<div class="calloverlay" id="callOverlay">
-
- <div class="callbox">
-
-  <img id="callAvatar" class="avatar" alt="">
-
-  <h2 id="callName">Voice call</h2>
-
-  <p id="callState">Connecting...</p>
-
-  <p id="callTimer">00:00</p>
-
-  <div class="callactions">
-
-   <button id="acceptBtn" style="background:#20a96b">📞</button>
-
-   <button id="muteBtn">🎙️</button>
-
-   <button id="endBtn" class="end">✕</button>
-
-  </div>
-
- </div>
-
-</div>
-
-<audio id="remoteAudio" autoplay></audio>
-
-<div id="toast"></div>
-
-
-
+<div id="login"><div class="loginbox">
+<div class="brand">SOCIAL<span> CHAT</span></div>
+<p class="muted">✦ Message. Connect. Share. ✦</p>
+<button class="primary" id="loginBtn" style="width:100%">Continue with Google</button>
+</div></div>
+<div id="app"><div class="layout">
+<header class="topbar"><div class="brand">SOCIAL<span> CHAT</span></div>
+<div class="topright"><button class="iconbtn" id="themeBtn" aria-label="Change theme">☀️</button><button class="iconbtn" id="settingsBtn" aria-label="Settings">⚙️</button><img class="smallavatar" id="topAvatar" alt="Profile"></div>
+</header>
+<section class="page active" id="chatsPage"><div class="pagehead"><h2>Chats 💬</h2><div class="muted">Your people. Your conversations.</div></div><div id="chatList" class="scroll"></div></section>
+<section class="page" id="chatPage"><div class="chathead"><button class="iconbtn" id="backChats">‹</button><img class="avatar" id="chatAvatar" alt=""><div class="chatheadinfo"><b id="chatName">Chat</b><small id="chatSub">SOCIAL CHAT</small></div><button class="iconbtn" id="callBtn" title="Voice call">📞</button></div><div id="messages"></div><div class="composer"><button class="iconbtn" id="attachBtn" title="Send image">📎</button><input type="file" id="imageInput" accept="image/*" hidden><button class="iconbtn" id="recordBtn" title="Voice message">🎙️</button><input id="messageInput" placeholder="Type a message..." autocomplete="off"><button class="send" id="sendBtn" aria-label="Send">➤</button></div></section>
+<section class="page" id="friendsPage"><div class="pagehead"><h2>Friends 👥</h2><div class="muted">Meet your people</div></div><div class="scroll"><div style="padding:12px 15px 4px"><h3>Friend requests</h3></div><div id="requestsList"></div><div style="padding:12px 15px 4px"><h3>My Friends</h3></div><div id="myFriends"></div><div style="padding:12px 15px 4px"><h3>Discover people</h3></div><div style="padding:0 15px 12px"><input id="friendSearch" class="search" placeholder="Search by name or email"></div><div id="addFriendsList"></div></div></section>
+<section class="page" id="statusPage"><div class="pagehead"><h2>Status 📸</h2><div class="muted">Share a moment with your friends</div></div><div class="statuscomposer"><input id="statusText" placeholder="What's your status?"><button class="primary" id="postStatus">Post</button></div><div style="padding:0 15px 12px"><button class="secondary" id="statusImageBtn">＋ Add photo</button><input id="statusImageInput" type="file" accept="image/*" hidden></div><div class="scroll" id="statusesList"></div></section>
+<nav class="bottomnav" id="bottomNav"><button class="navbtn active" data-page="chatsPage"><span>💬</span>Chats</button><button class="navbtn" data-page="friendsPage"><span>👥</span>Friends</button><button class="navbtn" data-page="statusPage"><span>📸</span>Status</button></nav>
+</div></div>
+<div class="overlay" id="settingsOverlay"><div class="modal"><h2>Profile settings ⚙️</h2><label class="muted">Display name</label><input id="profileName" class="field" maxlength="50" placeholder="Your name"><label class="muted">Profile photo</label><div style="display:flex;align-items:center;gap:12px;margin:8px 0 12px"><img id="profilePhotoPreview" class="avatar" alt="Profile preview"><div style="flex:1;min-width:0"><button class="secondary" id="chooseProfilePhoto" type="button">Choose photo</button><input id="profilePhotoFile" type="file" accept="image/*" hidden><p class="muted">Or paste an image URL below.</p></div></div><input id="profilePhoto" class="field" placeholder="https://..."><label class="muted">Bio</label><textarea id="profileBio" class="field" rows="3" maxlength="160" placeholder="Write a little about yourself"></textarea><div class="modalactions"><button class="primary" id="saveProfile">Save profile</button><button class="secondary" id="closeSettings">Close</button><button class="danger" id="logoutBtn">Log out</button></div><p class="muted">Profile photos use a public image URL or a selected local photo.</p></div></div>
+<div class="calloverlay" id="callOverlay"><div class="callbox"><img id="callAvatar" class="avatar" alt=""><h2 id="callName">Voice call</h2><p id="callState">Connecting...</p><p id="callTimer">00:00</p><div class="callactions"><button id="acceptBtn" style="background:#20a96b">📞</button><button id="muteBtn">🎙️</button><button id="endBtn" class="end">✕</button></div></div></div>
+<audio id="remoteAudio" autoplay></audio><div id="toast"></div>
 <script type="module">
-
-import {initializeApp} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-
-import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-
-import {getFirestore,collection,doc,getDoc,getDocs,setDoc,addDoc,updateDoc,query,where,orderBy,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-
-
-const firebaseConfig={
-
- apiKey:"AIzaSyBTjA_RsNNq1PtfSdE2VyFJS_5oU8BsVNc",
-
- authDomain:"social-chat-d48ff.firebaseapp.com",
-
- projectId:"social-chat-d48ff",
-
- storageBucket:"social-chat-d48ff.firebasestorage.app",
-
- messagingSenderId:"198437830373",
-
- appId:"1:198437830373:web:61616f534f9ee7e3c19e0c",
-
- measurementId:"G-7XMGG8N96Z"
-
-};
-
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,getDocs,setDoc,addDoc,updateDoc,query,where,orderBy,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBTjA_RsNNq1PtfSdE2VyFJS_5oU8BsVNc",authDomain:"social-chat-d48ff.firebaseapp.com",projectId:"social-chat-d48ff",storageBucket:"social-chat-d48ff.firebasestorage.app",messagingSenderId:"198437830373",appId:"1:198437830373:web:61616f534f9ee7e3c19e0c",measurementId:"G-7XMGG8N96Z"};
 const fb=initializeApp(firebaseConfig),auth=getAuth(fb),db=getFirestore(fb);
-
 const $=id=>document.getElementById(id);
-
-let me=null,myProfile={},people=[],friends=[],selected=null;
-
-let unMessages=null,unRequests=null,unStatuses=null,unCall=null;
-
-let recorder=null,recordStream=null,recordChunks=[];
-
-let pc=null,mic=null,callRef=null,callId=null,callTimer=null,seconds=0,muted=false;
-
-let pendingStatusPhoto="",selectedProfilePhoto="",pendingRemoteCandidates=[];
-
-const defaultPhoto=name=>"https://ui-avatars.com/api/?background=dedede&color=333&name="+encodeURIComponent(name||"User");
-
+let me=null,myProfile={},people=[],friends=[],selected=null,unMessages=null,unRequests=null,unStatuses=null,unCall=null,incomingUnsub=null,candidateUnsub=null,recorder=null,recordStream=null,recordChunks=[],pc=null,mic=null,callRef=null,callId=null,callTimer=null,seconds=0,muted=false,pendingStatusPhoto="",selectedProfilePhoto="",pendingRemoteCandidates=[];
+const defaultPhoto=name=>"https://ui-avatars.com/api/?background=292343&color=ffffff&name="+encodeURIComponent(name||"User");
 const photoFor=u=>u?.photo||defaultPhoto(u?.name);
-
-function toast(msg){$("toast").textContent=msg;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2600)}
-
+function toast(msg){$("toast").textContent=msg;$("toast").style.display="block";clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>$("toast").style.display="none",2800)}
 function safe(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-
-function cid(a,b){return [a,b].sort().join("_")}
-
-function when(ts){try{return ts?.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})||""}catch{return ""}}
-
-function showPage(id){
-
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
-
- document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
-
- $("bottomNav").style.display=id==="chatPage"?"none":"grid";
-
- if(id==="chatsPage")renderChatList();
-
-}
-
+function cid(a,b){return[a,b].sort().join("_")}
+function when(ts){try{return ts?.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})||""}catch{return""}}
+function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===id));$("bottomNav").style.display=id==="chatPage"?"none":"grid";if(id==="chatsPage")renderChatList()}
 document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
-
-$("loginBtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){toast(e.message)}};
-
+$("loginBtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){toast("Login failed: "+e.message)}};
 onAuthStateChanged(auth,async user=>{
-
- if(!user){if(incomingUnsub){incomingUnsub();incomingUnsub=null}if(unMessages){unMessages();unMessages=null}if(unRequests){unRequests();unRequests=null}if(unStatuses){unStatuses();unStatuses=null}if(pc)await endCall(false);$("login").style.display="grid";$("app").style.display="none";return}
-
- me=user;
-
- $("login").style.display="none";$("app").style.display="block";
-
- try{
-
-  const r=doc(db,"users",me.uid),s=await getDoc(r);
-
-  if(!s.exists())await setDoc(r,{uid:me.uid,name:me.displayName||"User",email:me.email||"",photo:me.photoURL||"",bio:"",friends:[],createdAt:serverTimestamp()});
-
-  await refreshProfile();
-
-  await loadPeople();
-
-  listenRequests();
-
-  listenStatuses();
-
-  showPage("chatsPage");
-
- }catch(e){toast("Firebase: "+e.message)}
-
+if(!user){if(incomingUnsub){incomingUnsub();incomingUnsub=null}if(unMessages){unMessages();unMessages=null}if(unRequests){unRequests();unRequests=null}if(unStatuses){unStatuses();unStatuses=null}if(pc)await endCall(false);$("login").style.display="grid";$("app").style.display="none";return}
+me=user;$("login").style.display="none";$("app").style.display="block";
+try{const r=doc(db,"users",me.uid),s=await getDoc(r);if(!s.exists())await setDoc(r,{uid:me.uid,name:me.displayName||"User",email:me.email||"",photo:me.photoURL||"",bio:"",friends:[],createdAt:serverTimestamp()});else if(!s.data().uid)await updateDoc(r,{uid:me.uid});await refreshProfile();await loadPeople();listenRequests();listenStatuses();showPage("chatsPage");if(!incomingUnsub)listenIncoming()}catch(e){toast("Firebase: "+e.message)}
 });
-
-async function refreshProfile(){
-
- const s=await getDoc(doc(db,"users",me.uid));myProfile=s.data()||{};
-
- $("topAvatar").src=photoFor(myProfile);
-
- $("profileName").value=myProfile.name||me.displayName||"";
-
- $("profilePhoto").value=myProfile.photo||"";
-
- $("profileBio").value=myProfile.bio||"";
-
-}
-
+async function refreshProfile(){const s=await getDoc(doc(db,"users",me.uid));myProfile=s.data()||{};$("topAvatar").src=photoFor(myProfile);$("profileName").value=myProfile.name||me.displayName||"";$("profilePhoto").value=myProfile.photo||"";$("profilePhotoPreview").src=photoFor(myProfile);$("profileBio").value=myProfile.bio||""}
 async function loadPeople(){
- const s=await getDocs(collection(db,"users"));
- people=s.docs.map(d=>d.data()).filter(u=>u.uid&&u.uid!==me.uid);
- const mine=new Set(myProfile.friends||[]);
- // Accepted requests establish friendship for both people without editing another user's profile.
- const [sent,received]=await Promise.all([
-  getDocs(query(collection(db,"friendRequests"),where("from","==",me.uid))),
-  getDocs(query(collection(db,"friendRequests"),where("to","==",me.uid)))
- ]);
- sent.docs.forEach(d=>{const r=d.data();if(r.status==="accepted"&&r.to)mine.add(r.to)});
- received.docs.forEach(d=>{const r=d.data();if(r.status==="accepted"&&r.from)mine.add(r.from)});
- friends=people.filter(p=>mine.has(p.uid));
- renderChatList();renderFriends();renderAddFriends();
+const s=await getDocs(collection(db,"users"));people=s.docs.map(d=>({...d.data(),uid:d.data().uid||d.id})).filter(u=>u.uid&&u.uid!==me.uid);
+const mine=new Set(myProfile.friends||[]);
+const[sent,received]=await Promise.all([getDocs(query(collection(db,"friendRequests"),where("from","==",me.uid))),getDocs(query(collection(db,"friendRequests"),where("to","==",me.uid)))]);
+sent.docs.forEach(d=>{const r=d.data();if(r.status==="accepted"&&r.to)mine.add(r.to)});received.docs.forEach(d=>{const r=d.data();if(r.status==="accepted"&&r.from)mine.add(r.from)});
+friends=people.filter(p=>mine.has(p.uid));renderChatList();renderFriends();renderAddFriends()
 }
-
-function renderChatList(){
-
- const box=$("chatList");box.innerHTML="";
-
- if(!friends.length){box.innerHTML='<div class="empty">Abhi friends nahi hain.<br>Friends tab se log add karo.</div>';return}
-
- friends.forEach(u=>{
-
-  const el=document.createElement("div");el.className="person";
-
-  el.innerHTML=`<img class="avatar" src="${safe(photoFor(u))}"><div class="personinfo"><b>${safe(u.name||"User")}</b><small>${safe(u.bio||u.email||"Friend")}</small></div><span>›</span>`;
-
-  el.onclick=()=>openChat(u);box.append(el)
-
- })
-
-}
-
-function renderFriends(){
-
- const box=$("myFriends");box.innerHTML="";
-
- if(!friends.length)box.innerHTML='<div class="empty">Your friends yahan nazar aayenge.</div>';
-
- friends.forEach(u=>{
-
-  const el=document.createElement("div");el.className="person";
-
-  el.innerHTML=`<img class="avatar" src="${safe(photoFor(u))}"><div class="personinfo"><b>${safe(u.name||"User")}</b><small>${safe(u.bio||u.email||"Friend")}</small></div><button class="primary">Chat</button>`;
-
-  el.querySelector("button").onclick=()=>openChat(u);box.append(el)
-
- })
-
-}
-
-function renderAddFriends(){
-
- const box=$("addFriendsList");if(!box)return;
-
- const term=($("friendSearch").value||"").toLowerCase();box.innerHTML="";
-
- const candidates=people.filter(u=>!(myProfile.friends||[]).includes(u.uid)&&((u.name||"").toLowerCase().includes(term)||(u.email||"").toLowerCase().includes(term)));
-
- if(!candidates.length){box.innerHTML='<div class="empty">No people found.</div>';return}
-
- candidates.forEach(u=>{
-
-  const el=document.createElement("div");el.className="person";
-
-  el.innerHTML=`<img class="avatar" src="${safe(photoFor(u))}"><div class="personinfo"><b>${safe(u.name||"User")}</b><small>${safe(u.email||"")}</small></div><button class="primary">Add</button>`;
-
-  el.querySelector("button").onclick=()=>sendRequest(u);box.append(el)
-
- })
-
-}
-
+function renderChatList(){const box=$("chatList");box.innerHTML="";if(!friends.length){box.innerHTML='<div class="empty">✨<br><br>Abhi friends nahi hain.<br>Friends tab se log add karo.</div>';return}friends.forEach(u=>{const el=document.createElement("div");el.className="person";el.innerHTML=`<img class="avatar" src="${safe(photoFor(u))}" alt=""><div class="personinfo"><b>${safe(u.name||"User")}</b><small>${safe(u.bio||u.email||"Friend")}</small></div><span>›</span>`;el.onclick=()=>openChat(u);box.append(el)})}
+function renderFriends(){const box=$("myFriends");box.innerHTML="";if(!friends.length)box.innerHTML='<div class="empty">Your friends will appear here.</div>';friends.forEach(u=>{const el=document.createElement("div");el.className="person";el.innerHTML=`<img class="avatar" src="${safe(photoFor(u))}" alt=""><div class="personinfo"><b>${safe(u.name||"User")}</b><small>${safe(u.bio||u.email||"Friend")}</small></div><button class="primary">Chat</button>`;el.querySelector("button").onclick=()=>openChat(u);box.append(el)})}
+function renderAddFriends(){const box=$("addFriendsList");if(!box)return;const term=($("friendSearch").value||"").toLowerCase();box.innerHTML="";const candidates=people.filter(u=>!(myProfile.friends||[]).includes(u.uid)&&!friends.some(f=>f.uid===u.uid)&&((u.name||"").toLowerCase().includes(term)||(u.email||"").toLowerCase().includes(term)));if(!candidates.length){box.innerHTML='<div class="empty">No people found.</div>';return}candidates.forEach(u=>{const el=document.createElement("div");el.className="person";el.innerHTML=`<img class="avatar" src="${safe(photoFor(u))}" alt=""><div class="personinfo"><b>${safe(u.name||"User")}</b><small>${safe(u.email||"")}</small></div><button class="primary">Add</button>`;el.querySelector("button").onclick=()=>sendRequest(u);box.append(el)})}
 $("friendSearch").oninput=renderAddFriends;
-
-async function sendRequest(u){
-
- try{
-
-  const q=query(collection(db,"friendRequests"),where("from","==",me.uid),where("to","==",u.uid),where("status","==","pending"));
-
-  const s=await getDocs(q);if(!s.empty){toast("Request already sent");return}
-
-  const already=query(collection(db,"friendRequests"),where("to","==",me.uid),where("from","==",u.uid),where("status","==","pending"));
-
-  const rev=await getDocs(already);if(!rev.empty){toast("Unki request accept kar lo");return}
-
-  await addDoc(collection(db,"friendRequests"),{from:me.uid,to:u.uid,status:"pending",createdAt:serverTimestamp()});
-
-  toast("Friend request sent!");
-
- }catch(e){toast(e.message)}
-
-}
-
-function listenRequests(){
-
- if(unRequests)unRequests();
-
- unRequests=onSnapshot(query(collection(db,"friendRequests"),where("to","==",me.uid),where("status","==","pending")),async s=>{
-
-  const box=$("requestsList");box.innerHTML="";
-
-  if(s.empty){box.innerHTML='<div class="empty">No pending requests.</div>';return}
-
-  for(const item of s.docs){
-
-   const req=item.data();const user=people.find(p=>p.uid===req.from)||{uid:req.from,name:"New user"};
-
-   const el=document.createElement("div");el.className="person";
-
-   el.innerHTML=`<img class="avatar" src="${safe(photoFor(user))}"><div class="personinfo"><b>${safe(user.name)}</b><small>Wants to be your friend</small></div><div class="rowbuttons"><button class="primary">Accept</button><button class="danger">Decline</button></div>`;
-
-   el.querySelector(".primary").onclick=()=>acceptRequest(item.id,req.from);
-
-   el.querySelector(".danger").onclick=()=>declineRequest(item.id);
-
-   box.append(el)
-
-  }
-
- })
-
-}
-
-async function acceptRequest(id,from){
- try{
-  const mine=Array.from(new Set([...(myProfile.friends||[]),from]));
-  await updateDoc(doc(db,"users",me.uid),{friends:mine});
-  await updateDoc(doc(db,"friendRequests",id),{status:"accepted",acceptedAt:serverTimestamp()});
-  await refreshProfile();await loadPeople();toast("Friend added!");
- }catch(e){toast("Could not accept: "+e.message)}
-}
-
+async function sendRequest(u){try{const q=query(collection(db,"friendRequests"),where("from","==",me.uid),where("to","==",u.uid),where("status","==","pending"));if(!(await getDocs(q)).empty){toast("Request already sent");return}const rev=await getDocs(query(collection(db,"friendRequests"),where("to","==",me.uid),where("from","==",u.uid),where("status","==","pending")));if(!rev.empty){toast("Unki request accept kar lo");return}await addDoc(collection(db,"friendRequests"),{from:me.uid,to:u.uid,status:"pending",createdAt:serverTimestamp()});toast("Friend request sent!");}catch(e){toast(e.message)}}
+function listenRequests(){if(unRequests)unRequests();unRequests=onSnapshot(query(collection(db,"friendRequests"),where("to","==",me.uid),where("status","==","pending")),s=>{const box=$("requestsList");box.innerHTML="";if(s.empty){box.innerHTML='<div class="empty">No pending requests.</div>';return}s.docs.forEach(item=>{const req=item.data(),user=people.find(p=>p.uid===req.from)||{uid:req.from,name:"New user"};const el=document.createElement("div");el.className="person";el.innerHTML=`<img class="avatar" src="${safe(photoFor(user))}" alt=""><div class="personinfo"><b>${safe(user.name)}</b><small>Wants to be your friend</small></div><div class="rowbuttons"><button class="primary">Accept</button><button class="danger">Decline</button></div>`;el.querySelector(".primary").onclick=()=>acceptRequest(item.id,req.from);el.querySelector(".danger").onclick=()=>declineRequest(item.id);box.append(el)})},e=>toast(e.message))}
+async function acceptRequest(id,from){try{await updateDoc(doc(db,"users",me.uid),{friends:Array.from(new Set([...(myProfile.friends||[]),from]))});await updateDoc(doc(db,"friendRequests",id),{status:"accepted",acceptedAt:serverTimestamp()});await refreshProfile();await loadPeople();toast("Friend added!")}catch(e){toast("Could not accept: "+e.message)}}
 async function declineRequest(id){try{await updateDoc(doc(db,"friendRequests",id),{status:"declined"});toast("Request declined")}catch(e){toast(e.message)}}
-
-async function openChat(u){
-
- selected=u;$("chatName").textContent=u.name||"Friend";$("chatAvatar").src=photoFor(u);$("chatSub").textContent=u.bio||"Chat";
-
- showPage("chatPage");
-
- if(unMessages)unMessages();
-
- const path=collection(db,"chats",cid(me.uid,u.uid),"messages");
-
- unMessages=onSnapshot(query(path,orderBy("createdAt","asc")),s=>{
-
-  const box=$("messages");box.innerHTML="";
-
-  s.forEach(d=>{
-
-   const m=d.data(),mine=m.senderId===me.uid,el=document.createElement("div");
-
-   el.className="msg"+(mine?" mine":"");
-
-   let body=safe(m.text||"");
-
-   if(m.type==="image")body=`<img src="${safe(m.data)}" alt="Shared image">`;
-
-   if(m.type==="voice")body=`<audio controls src="${safe(m.data)}"></audio>`;
-
-   el.innerHTML=body+`<div class="msgtime">${when(m.createdAt)}</div>`;
-
-   box.append(el)
-
-  });box.scrollTop=box.scrollHeight
-
- },e=>toast("Chat: "+e.message))
-
-}
-
-async function sendText(){
-
- if(!selected){toast("Pehle friend select karo");return}
-
- const text=$("messageInput").value.trim();if(!text)return;
-
- $("sendBtn").disabled=true;
-
- try{
-
-  await addDoc(collection(db,"chats",cid(me.uid,selected.uid),"messages"),{text,type:"text",senderId:me.uid,receiverId:selected.uid,createdAt:serverTimestamp()});
-
-  $("messageInput").value="";
-
- }catch(e){toast("Message nahi gaya: "+e.message)}
-
- finally{$("sendBtn").disabled=false;$("messageInput").focus()}
-
-}
-
-$("sendBtn").onclick=sendText;
-
-$("messageInput").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();sendText()}};
-
-$("backChats").onclick=()=>showPage("chatsPage");
-
-$("attachBtn").onclick=()=>$("imageInput").click();
-
-$("imageInput").onchange=async e=>{
-
- const file=e.target.files[0];if(!file||!selected)return;
-
- if(!file.type.startsWith("image/")){toast("Image select karo");return}
-
- if(file.size>2_000_000){toast("Image 2MB se chhoti rakho");return}
-
- const img=new Image(),reader=new FileReader();
-
- reader.onload=()=>{
-
-  img.onload=async()=>{
-
-   const c=document.createElement("canvas"),scale=Math.min(1,850/Math.max(img.width,img.height));
-
-   c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);
-
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-
-   const data=c.toDataURL("image/jpeg",.65);
-
-   try{await addDoc(collection(db,"chats",cid(me.uid,selected.uid),"messages"),{type:"image",data,senderId:me.uid,receiverId:selected.uid,createdAt:serverTimestamp()})}catch(err){toast("Image send nahi hui: "+err.message)}
-
-  };img.src=reader.result
-
- };reader.readAsDataURL(file);e.target.value=""
-
-};
-
-$("recordBtn").onclick=async()=>{
-
- if(!selected){toast("Pehle friend select karo");return}
-
- if(recorder?.state==="recording"){recorder.stop();$("recordBtn").textContent="🎙️";return}
-
- try{
-
-  recordStream=await navigator.mediaDevices.getUserMedia({audio:true});
-
-  recordChunks=[];recorder=new MediaRecorder(recordStream);
-
-  recorder.ondataavailable=e=>{if(e.data.size)recordChunks.push(e.data)};
-
-  recorder.onstop=async()=>{
-
-   recordStream.getTracks().forEach(t=>t.stop());
-
-   const blob=new Blob(recordChunks,{type:"audio/webm"});
-
-   if(blob.size>700000){toast("Voice message bohat bara hai");return}
-
-   const r=new FileReader();r.onload=async()=>{
-
-    try{await addDoc(collection(db,"chats",cid(me.uid,selected.uid),"messages"),{type:"voice",data:r.result,senderId:me.uid,receiverId:selected.uid,createdAt:serverTimestamp()})}catch(e){toast(e.message)}
-
-   };r.readAsDataURL(blob)
-
-  };
-
-  recorder.start();$("recordBtn").textContent="⏹️";toast("Recording... rokne ke liye ⏹️ dabao")
-
- }catch(e){toast("Microphone permission allow karo")}
-
-};
-
-async function compressProfilePhoto(file){
- if(!file.type.startsWith("image/"))throw Error("Image select karo");
- const raw=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
- const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error("Photo open nahi hui"));i.src=raw});
- const c=document.createElement("canvas"),scale=Math.min(1,320/Math.max(img.width,img.height));
- c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
- c.getContext("2d").drawImage(img,0,0,c.width,c.height);
- return c.toDataURL("image/jpeg",.65);
-}
-$("chooseProfilePhoto").onclick=()=>$("profilePhotoFile").click();
-$("profilePhotoFile").onchange=async e=>{
- const file=e.target.files?.[0];if(!file)return;
- try{selectedProfilePhoto=await compressProfilePhoto(file);$("profilePhotoPreview").src=selectedProfilePhoto;$("profilePhoto").value="";toast("Photo selected! Save profile dabao.")}
- catch(err){toast(err.message||"Photo select nahi hui")}
-};
-$("profilePhoto").oninput=()=>{selectedProfilePhoto="";const url=$("profilePhoto").value.trim();if(url)$("profilePhotoPreview").src=url;else $("profilePhotoPreview").src=photoFor(myProfile)};
-
-$("settingsBtn").onclick=()=>{$("settingsOverlay").classList.add("show")};
-
-$("closeSettings").onclick=()=>$("settingsOverlay").classList.remove("show");
-
-$("settingsOverlay").onclick=e=>{if(e.target===$("settingsOverlay"))$("settingsOverlay").classList.remove("show")};
-
-$("saveProfile").onclick=async()=>{
-
- const name=$("profileName").value.trim(),photo=selectedProfilePhoto||$("profilePhoto").value.trim(),bio=$("profileBio").value.trim();
-
- if(!name){toast("Name likho");return}
-
-  if(photo&&!photo.startsWith("data:image/")&&!/^https?:\/\//i.test(photo)){toast("Photo URL https:// se shuru honi chahiye");return}
-
- try{
-
-  await updateDoc(doc(db,"users",me.uid),{name,photo,bio});
-
-  await refreshProfile();await loadPeople();$("settingsOverlay").classList.remove("show");toast("Profile updated!")
-
- }catch(e){toast("Profile save nahi hua: "+e.message)}
-
-};
-
+async function openChat(u){selected=u;$("chatName").textContent=u.name||"Friend";$("chatAvatar").src=photoFor(u);$("chatSub").textContent=u.bio||"SOCIAL CHAT";showPage("chatPage");if(unMessages)unMessages();const path=collection(db,"chats",cid(me.uid,u.uid),"messages");unMessages=onSnapshot(query(path,orderBy("createdAt","asc")),s=>{const box=$("messages");box.innerHTML="";s.forEach(d=>{const m=d.data(),el=document.createElement("div");el.className="msg"+(m.senderId===me.uid?" mine":"");let body=safe(m.text||"");if(m.type==="image")body=`<img src="${safe(m.data)}" alt="Shared image">`;if(m.type==="voice")body=`<audio controls preload="metadata" src="${safe(m.data)}"></audio>`;el.innerHTML=body+`<div class="msgtime">${when(m.createdAt)}</div>`;box.append(el)});box.scrollTop=box.scrollHeight},e=>toast("Chat: "+e.message))}
+async function sendText(){if(!selected){toast("Pehle friend select karo");return}const text=$("messageInput").value.trim();if(!text)return;$("sendBtn").disabled=true;try{await addDoc(collection(db,"chats",cid(me.uid,selected.uid),"messages"),{text,type:"text",senderId:me.uid,receiverId:selected.uid,createdAt:serverTimestamp()});$("messageInput").value=""}catch(e){toast("Message nahi gaya: "+e.message)}finally{$("sendBtn").disabled=false;$("messageInput").focus()}}
+$("sendBtn").onclick=sendText;$("messageInput").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();sendText()}};
+$("backChats").onclick=()=>showPage("chatsPage");$("attachBtn").onclick=()=>$("imageInput").click();
+$("imageInput").onchange=async e=>{const file=e.target.files[0];if(!file||!selected)return;if(!file.type.startsWith("image/")){toast("Image select karo");return}if(file.size>2000000){toast("Image 2MB se chhoti rakho");return}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=async()=>{const c=document.createElement("canvas"),scale=Math.min(1,850/Math.max(img.width,img.height));c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext("2d").drawImage(img,0,0,c.width,c.height);try{await addDoc(collection(db,"chats",cid(me.uid,selected.uid),"messages"),{type:"image",data:c.toDataURL("image/jpeg",.65),senderId:me.uid,receiverId:selected.uid,createdAt:serverTimestamp()})}catch(err){toast("Image send nahi hui: "+err.message)}};img.src=reader.result};reader.readAsDataURL(file);e.target.value=""};
+$("recordBtn").onclick=async()=>{if(!selected){toast("Pehle friend select karo");return}if(recorder?.state==="recording"){recorder.stop();$("recordBtn").textContent="🎙️";return}try{recordStream=await navigator.mediaDevices.getUserMedia({audio:true});recordChunks=[];recorder=new MediaRecorder(recordStream);recorder.ondataavailable=e=>{if(e.data.size)recordChunks.push(e.data)};recorder.onstop=async()=>{recordStream.getTracks().forEach(t=>t.stop());const blob=new Blob(recordChunks,{type:"audio/webm"});if(blob.size>700000){toast("Voice message bohat bara hai");return}const r=new FileReader();r.onload=async()=>{try{await addDoc(collection(db,"chats",cid(me.uid,selected.uid),"messages"),{type:"voice",data:r.result,senderId:me.uid,receiverId:selected.uid,createdAt:serverTimestamp()})}catch(e){toast(e.message)}};r.readAsDataURL(blob)};recorder.start();$("recordBtn").textContent="⏹️";toast("Recording... rokne ke liye ⏹️ dabao")}catch(e){toast("Microphone permission allow karo")}};
+async function compressPhoto(file,max=320){if(!file.type.startsWith("image/"))throw Error("Image select karo");const raw=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error("Photo open nahi hui"));i.src=raw});const c=document.createElement("canvas"),scale=Math.min(1,max/Math.max(img.width,img.height));c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext("2d").drawImage(img,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.62)}
+$("chooseProfilePhoto").onclick=()=>$("profilePhotoFile").click();$("profilePhotoFile").onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{selectedProfilePhoto=await compressPhoto(f);$("profilePhotoPreview").src=selectedProfilePhoto;$("profilePhoto").value="";toast("Photo selected! Save profile dabao.")}catch(err){toast(err.message)}};
+$("profilePhoto").oninput=()=>{selectedProfilePhoto="";$("profilePhotoPreview").src=$("profilePhoto").value.trim()||photoFor(myProfile)};
+$("settingsBtn").onclick=()=>$("settingsOverlay").classList.add("show");$("closeSettings").onclick=()=>$("settingsOverlay").classList.remove("show");$("settingsOverlay").onclick=e=>{if(e.target===$("settingsOverlay"))$("settingsOverlay").classList.remove("show")};
+$("saveProfile").onclick=async()=>{const name=$("profileName").value.trim(),photo=selectedProfilePhoto||$("profilePhoto").value.trim(),bio=$("profileBio").value.trim();if(!name){toast("Name likho");return}if(photo&&!photo.startsWith("data:image/")&&!/^https?:\/\//i.test(photo)){toast("Photo URL https:// se shuru honi chahiye");return}try{await updateDoc(doc(db,"users",me.uid),{uid:me.uid,name,photo,bio});await refreshProfile();await loadPeople();$("settingsOverlay").classList.remove("show");toast("Profile updated!")}catch(e){toast("Profile save nahi hua: "+e.message)}};
 $("logoutBtn").onclick=()=>signOut(auth);
-
-$("themeBtn").onclick=()=>{
-
- document.body.classList.toggle("dark");
-
- localStorage.setItem("shocial-dark",document.body.classList.contains("dark")?"1":"0");
-
- $("themeBtn").textContent=document.body.classList.contains("dark")?"☀️":"🌙"
-
-};
-
-if(localStorage.getItem("shocial-dark")==="1"){document.body.classList.add("dark");$("themeBtn").textContent="☀️"}
-
-async function compressStatus(file){
-
- if(!file.type.startsWith("image/"))throw Error("Image select karo");
-
- const raw=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
-
- const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=raw});
-
- const c=document.createElement("canvas"),scale=Math.min(1,800/Math.max(img.width,img.height));
-
- c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-
- const data=c.toDataURL("image/jpeg",.6);if(data.length>800000)throw Error("Chhoti photo select karo");return data
-
-}
-
+function setTheme(dark){document.body.classList.toggle("light",!dark);$("themeBtn").textContent=dark?"☀️":"🌙";localStorage.setItem("social-theme",dark?"dark":"light")}
+$("themeBtn").onclick=()=>setTheme(!document.body.classList.contains("light"));setTheme(localStorage.getItem("social-theme")!=="light");
 $("statusImageBtn").onclick=()=>$("statusImageInput").click();
-
-$("statusImageInput").onchange=async e=>{
-
- const f=e.target.files[0];if(!f)return;
-
- try{pendingStatusPhoto=await compressStatus(f);$("statusImageBtn").textContent="✓ Photo ready";toast("Photo ready! Ab Post dabao")}catch(err){toast(err.message)}
-
- e.target.value=""
-
-};
-
-$("postStatus").onclick=async()=>{
-
- const text=$("statusText").value.trim();if(!text&&!pendingStatusPhoto){toast("Text ya photo add karo");return}
-
- try{
-
-  await updateDoc(doc(db,"users",me.uid),{statusText:text,statusPhoto:pendingStatusPhoto,statusAt:serverTimestamp()});
-
-  $("statusText").value="";pendingStatusPhoto="";$("statusImageBtn").textContent="＋ Add photo";toast("Status posted!")
-
- }catch(e){toast("Status post nahi hua: "+e.message)}
-
-};
-
-function listenStatuses(){
-
- if(unStatuses)unStatuses();
-
- unStatuses=onSnapshot(collection(db,"users"),s=>{
-
-  const box=$("statusesList");box.innerHTML="";
-
-  const docs=s.docs.map(d=>d.data()).filter(u=>u.statusAt&&(u.uid===me.uid||(myProfile.friends||[]).includes(u.uid)));
-
-  docs.sort((a,b)=>(b.statusAt?.toMillis?.()||0)-(a.statusAt?.toMillis?.()||0));
-
-  if(!docs.length){box.innerHTML='<div class="empty">Abhi koi status nahi. Apna pehla status post karo!</div>';return}
-
-  docs.forEach(u=>{
-
-   const el=document.createElement("div");el.className="statuscard";
-
-   const date=when(u.statusAt);
-
-   el.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><img class="smallavatar" src="${safe(photoFor(u))}"><div><b>${safe(u.name||"User")}</b><div class="muted">${safe(date)}</div></div></div>${u.statusText?`<p>${safe(u.statusText)}</p>`:""}${u.statusPhoto?`<img src="${safe(u.statusPhoto)}" alt="Status photo">`:""}`;
-
-   box.append(el)
-
-  })
-
- })
-
-}
-
-/* Free WebRTC voice call */
-
+$("statusImageInput").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{pendingStatusPhoto=await compressPhoto(f,800);if(pendingStatusPhoto.length>800000)throw Error("Chhoti photo select karo");$("statusImageBtn").textContent="✓ Photo ready";toast("Photo ready! Ab Post dabao")}catch(err){toast(err.message);pendingStatusPhoto=""}e.target.value=""};
+$("postStatus").onclick=async()=>{const text=$("statusText").value.trim();if(!text&&!pendingStatusPhoto){toast("Text ya photo add karo");return}try{await updateDoc(doc(db,"users",me.uid),{statusText:text,statusPhoto:pendingStatusPhoto,statusAt:serverTimestamp()});$("statusText").value="";pendingStatusPhoto="";$("statusImageBtn").textContent="＋ Add photo";toast("Status posted!")}catch(e){toast("Status post nahi hua: "+e.message)}};
+function listenStatuses(){if(unStatuses)unStatuses();unStatuses=onSnapshot(collection(db,"users"),s=>{const box=$("statusesList");box.innerHTML="";const docs=s.docs.map(d=>({...d.data(),uid:d.data().uid||d.id})).filter(u=>u.statusAt&&(u.uid===me.uid||(myProfile.friends||[]).includes(u.uid)||friends.some(f=>f.uid===u.uid)));docs.sort((a,b)=>(b.statusAt?.toMillis?.()||0)-(a.statusAt?.toMillis?.()||0));if(!docs.length){box.innerHTML='<div class="empty">📸<br><br>No statuses yet. Share your first moment!</div>';return}docs.forEach(u=>{const el=document.createElement("div");el.className="statuscard";el.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><img class="smallavatar" src="${safe(photoFor(u))}" alt=""><div><b>${safe(u.name||"User")}</b><div class="muted">${safe(when(u.statusAt))}</div></div></div>${u.statusText?`<p>${safe(u.statusText)}</p>`:""}${u.statusPhoto?`<img src="${safe(u.statusPhoto)}" alt="Status photo">`:""}`;box.append(el)})},e=>toast("Status: "+e.message))}
 const rtc={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]};
-
 function showCall(u,state){$("callAvatar").src=photoFor(u);$("callName").textContent=u.name||"Voice call";$("callState").textContent=state;$("callOverlay").style.display="flex"}
-
-async function startCall(){
-
- if(!selected){toast("Pehle friend select karo");return}
-
- try{
-
-  mic=await navigator.mediaDevices.getUserMedia({audio:true});
-
-  callId=me.uid+"_"+Date.now();callRef=doc(db,"calls",callId);
-
-  pc=new RTCPeerConnection(rtc);mic.getTracks().forEach(t=>pc.addTrack(t,mic));
-
-  pc.ontrack=e=>$("remoteAudio").srcObject=e.streams[0];
-
-  pc.onicecandidate=async e=>{if(e.candidate&&callId)await addDoc(collection(db,"calls",callId,"callerCandidates"),e.candidate.toJSON())};
-
-  const offer=await pc.createOffer();await pc.setLocalDescription(offer);
-
-  await setDoc(callRef,{callerId:me.uid,calleeId:selected.uid,callerName:myProfile.name||me.displayName,callerPhoto:myProfile.photo||me.photoURL||"",offer:{type:offer.type,sdp:offer.sdp},status:"ringing",createdAt:serverTimestamp()});
-
-  showCall(selected,"Calling...");$("acceptBtn").style.display="none";watchAnswer();
-
- }catch(e){toast("Call start nahi hui: "+e.message);endCall(false)}
-
-}
-
+async function startCall(){if(!selected){toast("Pehle friend select karo");return}try{mic=await navigator.mediaDevices.getUserMedia({audio:true});callId=me.uid+"_"+Date.now();callRef=doc(db,"calls",callId);pc=new RTCPeerConnection(rtc);mic.getTracks().forEach(t=>pc.addTrack(t,mic));pc.ontrack=e=>$("remoteAudio").srcObject=e.streams[0];pc.onicecandidate=async e=>{if(e.candidate&&callId)await addDoc(collection(db,"calls",callId,"callerCandidates"),e.candidate.toJSON())};const offer=await pc.createOffer();await pc.setLocalDescription(offer);await setDoc(callRef,{callerId:me.uid,calleeId:selected.uid,callerName:myProfile.name||me.displayName,callerPhoto:myProfile.photo||me.photoURL||"",offer:{type:offer.type,sdp:offer.sdp},status:"ringing",createdAt:serverTimestamp()});showCall(selected,"Calling...");$("acceptBtn").style.display="none";$("muteBtn").style.display="block";watchAnswer()}catch(e){toast("Call start nahi hui: "+e.message);endCall(false)}}
 $("callBtn").onclick=startCall;
-
-function watchAnswer(){
-
- if(unCall)unCall();
-
- unCall=onSnapshot(callRef,async s=>{
-
-  if(!s.exists())return;const d=s.data();
-
-  if(d.answer&&pc&&!pc.currentRemoteDescription){await pc.setRemoteDescription(d.answer);await flushPendingCandidates();$("callState").textContent="Connected";startTimer();listenCandidates("calleeCandidates")}
-
-  if(d.status==="ended")endCall(false);
-
- })
-
-}
-
-let candidateUnsub=null;
-
-async function addCandidateSafely(candidate){
- if(!pc)return;
- if(!pc.remoteDescription){pendingRemoteCandidates.push(candidate);return;}
- try{await pc.addIceCandidate(candidate)}catch(e){console.warn("ICE candidate:",e)}
-}
-async function flushPendingCandidates(){
- if(!pc||!pc.remoteDescription)return;
- const queued=pendingRemoteCandidates.splice(0);
- for(const candidate of queued)await addCandidateSafely(candidate);
-}
-function listenCandidates(kind){
- if(candidateUnsub)candidateUnsub();
- candidateUnsub=onSnapshot(collection(db,"calls",callId,kind),s=>s.docChanges().forEach(c=>{
-  if(c.type==="added")addCandidateSafely(c.doc.data());
- }))
-}
-
-let incomingUnsub=null;
-
-function listenIncoming(){
-
- incomingUnsub=onSnapshot(query(collection(db,"calls"),where("calleeId","==",me.uid),where("status","==","ringing")),s=>{
-
-  s.docChanges().forEach(c=>{
-
-   if(c.type!=="added"||callId)return;
-
-   const d=c.doc.data();callId=c.doc.id;callRef=doc(db,"calls",callId);
-
-   showCall({name:d.callerName,photo:d.callerPhoto},"Incoming voice call");
-
-   $("acceptBtn").style.display="block";$("muteBtn").style.display="none";
-
-  })
-
- })
-
-}
-
-$("acceptBtn").onclick=async()=>{
-
- try{
-
-  const s=await getDoc(callRef);if(!s.exists())return;const d=s.data();
-
-  pendingRemoteCandidates=[];mic=await navigator.mediaDevices.getUserMedia({audio:true});pc=new RTCPeerConnection(rtc);
-
-  mic.getTracks().forEach(t=>pc.addTrack(t,mic));
-
-  pc.ontrack=e=>$("remoteAudio").srcObject=e.streams[0];
-
-  pc.onicecandidate=e=>{if(e.candidate&&callId)addDoc(collection(db,"calls",callId,"calleeCandidates"),e.candidate.toJSON())};
-
-  await pc.setRemoteDescription(d.offer);await flushPendingCandidates();const answer=await pc.createAnswer();await pc.setLocalDescription(answer);
-
-  await updateDoc(callRef,{answer:{type:answer.type,sdp:answer.sdp},status:"connected"});
-
-  $("callState").textContent="Connected";$("acceptBtn").style.display="none";$("muteBtn").style.display="block";
-
-  listenCandidates("callerCandidates");startTimer();
-
- }catch(e){toast("Call connect nahi hui: "+e.message);endCall()}
-
-};
-
-function startTimer(){
-
- if(callTimer)return;seconds=0;
-
- callTimer=setInterval(()=>{seconds++;$("callTimer").textContent=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0")},1000)
-
-}
-
+function watchAnswer(){if(unCall)unCall();unCall=onSnapshot(callRef,async s=>{if(!s.exists())return;const d=s.data();if(d.answer&&pc&&!pc.currentRemoteDescription){await pc.setRemoteDescription(d.answer);await flushPendingCandidates();$("callState").textContent="Connected";startTimer();listenCandidates("calleeCandidates")}if(d.status==="ended")endCall(false)},e=>toast(e.message))}
+async function addCandidateSafely(c){if(!pc)return;if(!pc.remoteDescription){pendingRemoteCandidates.push(c);return}try{await pc.addIceCandidate(c)}catch(e){console.warn(e)}}
+async function flushPendingCandidates(){if(!pc||!pc.remoteDescription)return;for(const c of pendingRemoteCandidates.splice(0))await addCandidateSafely(c)}
+function listenCandidates(kind){if(candidateUnsub)candidateUnsub();candidateUnsub=onSnapshot(collection(db,"calls",callId,kind),s=>s.docChanges().forEach(c=>{if(c.type==="added")addCandidateSafely(c.doc.data())}))}
+function listenIncoming(){incomingUnsub=onSnapshot(query(collection(db,"calls"),where("calleeId","==",me.uid),where("status","==","ringing")),s=>{s.docChanges().forEach(c=>{if(c.type!=="added"||callId)return;const d=c.doc.data();callId=c.doc.id;callRef=doc(db,"calls",callId);showCall({name:d.callerName,photo:d.callerPhoto},"Incoming voice call");$("acceptBtn").style.display="block";$("muteBtn").style.display="none"})},e=>console.warn(e))}
+$("acceptBtn").onclick=async()=>{try{const s=await getDoc(callRef);if(!s.exists())return;const d=s.data();pendingRemoteCandidates=[];mic=await navigator.mediaDevices.getUserMedia({audio:true});pc=new RTCPeerConnection(rtc);mic.getTracks().forEach(t=>pc.addTrack(t,mic));pc.ontrack=e=>$("remoteAudio").srcObject=e.streams[0];pc.onicecandidate=e=>{if(e.candidate&&callId)addDoc(collection(db,"calls",callId,"calleeCandidates"),e.candidate.toJSON())};await pc.setRemoteDescription(d.offer);await flushPendingCandidates();const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await updateDoc(callRef,{answer:{type:answer.type,sdp:answer.sdp},status:"connected"});$("callState").textContent="Connected";$("acceptBtn").style.display="none";$("muteBtn").style.display="block";listenCandidates("callerCandidates");startTimer()}catch(e){toast("Call connect nahi hui: "+e.message);endCall()}}
+function startTimer(){if(callTimer)return;seconds=0;callTimer=setInterval(()=>{$("callTimer").textContent=String(Math.floor(++seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0")},1000)}
 function stopTimer(){clearInterval(callTimer);callTimer=null;seconds=0;$("callTimer").textContent="00:00"}
-
-$("muteBtn").onclick=()=>{
-
- if(!mic)return;muted=!muted;mic.getAudioTracks().forEach(t=>t.enabled=!muted);$("muteBtn").textContent=muted?"🔇":"🎙️"
-
-};
-
+$("muteBtn").onclick=()=>{if(!mic)return;muted=!muted;mic.getAudioTracks().forEach(t=>t.enabled=!muted);$("muteBtn").textContent=muted?"🔇":"🎙️"};
 $("endBtn").onclick=()=>endCall(true);
-
-async function endCall(notify=true){
-
- try{if(notify&&callRef)await updateDoc(callRef,{status:"ended"})}catch(e){}
-
- if(unCall){unCall();unCall=null}if(candidateUnsub){candidateUnsub();candidateUnsub=null}
-
- if(pc){pc.close();pc=null}if(mic){mic.getTracks().forEach(t=>t.stop());mic=null}
-
- $("remoteAudio").srcObject=null;$("callOverlay").style.display="none";$("callTimer").textContent="00:00";
-
- stopTimer();callId=null;callRef=null;muted=false;$("muteBtn").textContent="🎙️";
-
-}
-
-onAuthStateChanged(auth,u=>{if(u&&!incomingUnsub)listenIncoming()});
-
+async function endCall(notify=true){try{if(notify&&callRef)await updateDoc(callRef,{status:"ended"})}catch(e){}if(unCall){unCall();unCall=null}if(candidateUnsub){candidateUnsub();candidateUnsub=null}if(pc){pc.close();pc=null}if(mic){mic.getTracks().forEach(t=>t.stop());mic=null}if(recorder?.state==="recording"){recorder.stop()}if(recordStream){recordStream.getTracks().forEach(t=>t.stop());recordStream=null}$("remoteAudio").srcObject=null;$("callOverlay").style.display="none";stopTimer();callId=null;callRef=null;muted=false;$("muteBtn").textContent="🎙️"}
 </script>
-
 </body>
-
 </html>
